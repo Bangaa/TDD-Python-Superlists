@@ -12,7 +12,7 @@ class NewVisitorTest(LiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
 
-    def test_can_start_a_list_and_retrieve_it_later(self):
+    def test_can_start_a_list_for_one_user(self):
         # Juanito has heard about a cool new online to-do app. He goes
         # to check out its homepage
         self.browser.get(self.live_server_url)
@@ -35,7 +35,7 @@ class NewVisitorTest(LiveServerTestCase):
         # When he hits enter, the page updates, and now the page lists
         # "1: Buy peacock feathers" as an item in a to-do list
         self.add_todo_element("Buy peacock feathers")
-        self._assertRowInTable("1: Buy peacock feathers")
+        self._assertRowInTable("1: Buy peacock feathers", 5)
 
         # There is still a text box inviting him to add another item. He
         # enters "Use peacock feathers to make a fly" (Juanito is very methodical)
@@ -43,18 +43,51 @@ class NewVisitorTest(LiveServerTestCase):
 
         # The page updates again, and now shows both items on his list
 
-        self._assertRowInTable("1: Buy peacock feathers")
-        self._assertRowInTable('2: Use peacock feathers to make a fly')
-
-        # Juanito wonders whether the site will remember his list. Then he sees
-        # that the site has generated a unique URL for him -- there is some
-        # explanatory text to that effect.
-        self.fail('Finish the test!')
-
-        # He visits that URL - his to-do list is still there.
+        self._assertRowInTable("1: Buy peacock feathers", 5)
+        self._assertRowInTable('2: Use peacock feathers to make a fly', 5)
 
         # Satisfied, he goes back to sleep
 
+    def test_multiple_users_can_start_lists_at_different_urls(self):
+        # Edith start a new to-do list
+        self.browser.get(self.live_server_url)
+        self.add_todo_element('Buy peacock feathers')
+        self._assertRowInTable('1: Buy peacock feathers')
+
+        # She notices that her list has a unique URL
+        edith_list_url = self.browser.current_url
+        self.assertRegex(edith_list_url, '/lists/.+')
+
+        # Now a new user, Francis, comes along to the site.
+
+        ## We use a new browser session to make sure that no information
+        ## of Edith's is coming through from cookies etc
+        self.browser.quit()
+        self.browser = webdriver.Firefox()
+
+        # Francis visits the home page.  There is no sign of Edith's
+        # list
+        self.browser.get(self.live_server_url)
+        self._assertRowNotInTable('1: Buy peacock feathers', 1)
+        self._assertRowNotInTable('2: Use peacock feathers to make a fly', 1)
+
+        # Francis starts a new list by entering a new item. He
+        # is less interesting than Edith...
+        self.add_todo_element('Buy milk')
+        self._assertRowInTable('1: Buy milk')
+
+        # Francis gets his own unique URL
+        francis_list_url = self.browser.current_url
+        self.assertRegex(francis_list_url, '/lists/.+')
+        self.assertNotEqual(francis_list_url, edith_list_url)
+
+        # Again, there is no trace of Edith's list
+        self._assertRowNotInTable('1: Buy peacock feathers')
+        self._assertRowInTable('1: Buy milk')
+
+        # Satisfied, they both go back to sleep
+
+    ##
     # Comprueba que exista una fila determinada en la tabla que contiene la
     # lista de elementos.
     # @param row_text Es el texto de la fila que se busca

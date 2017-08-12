@@ -35,7 +35,7 @@ class NewVisitorTest(LiveServerTestCase):
         # When he hits enter, the page updates, and now the page lists
         # "1: Buy peacock feathers" as an item in a to-do list
         self.add_todo_element("Buy peacock feathers")
-        self.check_if_row_in_table("1: Buy peacock feathers", 5)
+        self._assertRowInTable("1: Buy peacock feathers")
 
         # There is still a text box inviting him to add another item. He
         # enters "Use peacock feathers to make a fly" (Juanito is very methodical)
@@ -43,8 +43,8 @@ class NewVisitorTest(LiveServerTestCase):
 
         # The page updates again, and now shows both items on his list
 
-        self.check_if_row_in_table("1: Buy peacock feathers", 5)
-        self.check_if_row_in_table('2: Use peacock feathers to make a fly', 5)
+        self._assertRowInTable("1: Buy peacock feathers")
+        self._assertRowInTable('2: Use peacock feathers to make a fly')
 
         # Juanito wonders whether the site will remember his list. Then he sees
         # that the site has generated a unique URL for him -- there is some
@@ -60,7 +60,7 @@ class NewVisitorTest(LiveServerTestCase):
     # @param row_text Es el texto de la fila que se busca
     # @param max_wait Es el tiempo maximo que se espera, en segundos, antes que
     # la busqueda se determine como un fracaso
-    def check_if_row_in_table(self, row_text, max_wait):
+    def _assertRowInTable(self, row_text, max_wait=5):
         start_time = time.time()
 
         while True:
@@ -70,6 +70,21 @@ class NewVisitorTest(LiveServerTestCase):
                 self.assertIn(row_text, [row.text for row in rows])
                 break
             except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > max_wait:
+                    raise e
+                else:
+                    time.sleep(0.1)
+
+    def _assertRowNotInTable(self, row_text, max_wait=5):
+        start_time = time.time()
+
+        while time.time() - start_time < max_wait:
+            try:
+                table = self.browser.find_element_by_id('id_list_table')
+                rows = table.find_elements_by_tag_name("tr")
+                self.assertNotIn(row_text, [row.text for row in rows])
+
+            except  WebDriverException as e:
                 if time.time() - start_time > max_wait:
                     raise e
                 else:

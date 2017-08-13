@@ -20,21 +20,11 @@ class HomePageTest(TestCase):
     def test_redirect_after_POST(self):
         response = self.client.post('/', data={'item_text': 'A new list item'})
         self.assertEqual(response.status_code, 302) # 302 := found (comunica que redirige a otra URI)
-        self.assertEqual(response['location'], '/')
+        self.assertEqual(response['location'], '/lists/the-only-list-in-the-world/')
 
     def test_only_saves_items_when_necessary(self):
         self.client.get('/')
         self.assertEqual(Item.objects.count(), 0)
-
-    def test_display_all_list_items(self):
-        Item.objects.create(text='TODO item 1')
-        Item.objects.create(text='TODO item 2')
-
-        response = self.client.get('/')
-        html = response.content.decode().strip()
-
-        self.assertIn('TODO item 1', html)
-        self.assertIn('TODO item 2', html)
 
 from lists.models import Item
 
@@ -56,3 +46,18 @@ class ItemModelTest(TestCase):
         second_saved_item = saved_items[1]
         self.assertEqual(first_saved_item.text, 'The first (ever) list item')
         self.assertEqual(second_saved_item.text, 'Item the second')
+
+class ListViewTest(TestCase):
+
+    def test_display_all_items(self):
+        Item.objects.create(text='TODO item 1')
+        Item.objects.create(text='TODO item 2')
+
+        response = self.client.get('/lists/the-only-list-in-the-world/')
+
+        self.assertContains(response, 'TODO item 1')
+        self.assertContains(response, 'TODO item 2')
+
+    def test_uses_list_template(self):
+        response = self.client.get('/lists/the-only-list-in-the-world/')
+        self.assertTemplateUsed(response, 'list.html')

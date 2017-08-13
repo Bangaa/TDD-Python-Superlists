@@ -23,12 +23,6 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertIn("To-Do", header_text)
 
         # He is invited to enter a to-do item straight away
-        inputbox = self.browser.find_element_by_id('id_new_item')
-        self.assertEqual(
-            inputbox.get_attribute('placeholder'),
-            'Enter a to-do item'
-        )
-
         # He types "Buy peacock feathers" into a text box (Juanito's hobby
         # is tying fly-fishing lures)
 
@@ -43,8 +37,8 @@ class NewVisitorTest(LiveServerTestCase):
 
         # The page updates again, and now shows both items on his list
 
-        self._assertRowInTable("1: Buy peacock feathers", 5)
-        self._assertRowInTable('2: Use peacock feathers to make a fly', 5)
+        self._assertRowInTable("1: Buy peacock feathers", 10)
+        self._assertRowInTable('2: Use peacock feathers to make a fly', 10)
 
         # Satisfied, he goes back to sleep
 
@@ -65,11 +59,9 @@ class NewVisitorTest(LiveServerTestCase):
         self.browser.quit()
         self.browser = webdriver.Firefox()
 
-        # Francis visits the home page.  There is no sign of Edith's
-        # list
+        # Francis visits the home page.  There is no sign of Edith's list
         self.browser.get(self.live_server_url)
-        self._assertRowNotInTable('1: Buy peacock feathers', 1)
-        self._assertRowNotInTable('2: Use peacock feathers to make a fly', 1)
+        self._assertRowNotInTable('1: Buy peacock feathers', 7)
 
         # Francis starts a new list by entering a new item. He
         # is less interesting than Edith...
@@ -122,8 +114,6 @@ class NewVisitorTest(LiveServerTestCase):
                     raise e
                 else:
                     time.sleep(0.1)
-
-
 
     def add_todo_element(self, todo_text):
         inputbox = self.browser.find_element_by_id('id_new_item')

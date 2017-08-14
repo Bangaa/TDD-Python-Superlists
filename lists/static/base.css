@@ -1,0 +1,14 @@
+#id_new_item {
+    margin-top: 2ex;
+    border-color: #8080ff;
+    border-style: solid;
+    border-width: medium;
+}
+
+.form-container {
+    background-color: #9999ff;
+    border-color: #8080ff;
+    border-style: solid;
+}
+
+/* vim: set et sw=4 sts=-1: */

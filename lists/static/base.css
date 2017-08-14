@@ -11,4 +11,10 @@
     border-style: solid;
 }
 
+.item-counter {
+    font-weight: bold;
+    font-family: monospace;
+    text-align: right;
+}
+
 /* vim: set et sw=4 sts=-1: */

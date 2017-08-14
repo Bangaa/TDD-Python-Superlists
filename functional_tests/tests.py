@@ -73,7 +73,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertNotEqual(francis_list_url, edith_list_url)
 
         # Again, there is no trace of Edith's list
-        self._assertRowNotInTable('1: Buy peacock feathers')
+        self._assertRowNotInTable('1: Buy peacock feathers', 1)
         self._assertRowInTable('1: Buy milk')
 
         # Satisfied, they both go back to sleep
@@ -118,6 +118,28 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys(todo_text)
         inputbox.send_keys(Keys.ENTER)
+
+    def test_layout_and_styling(self):
+        # Edith goes to the home page
+        self.browser.get(self.live_server_url)
+        self.browser.set_window_size(1024, 768)
+
+        # She notices the input box is nicely centered
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        self.assertAlmostEqual(
+            inputbox.location['x'] + inputbox.size['width'] / 2, 512,
+            delta=10
+        )
+
+        # She starts a new list and sees the input is nicely centered there too
+        self.add_todo_element('testing')
+        self._assertRowInTable('1: testing')
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        self.assertAlmostEqual(
+            inputbox.location['x'] + inputbox.size['width'] / 2,
+            512,
+            delta=10
+        )
 
 if __name__ == '__main__':
     unittest.main(warnings='ignore')

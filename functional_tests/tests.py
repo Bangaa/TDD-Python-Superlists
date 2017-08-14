@@ -30,7 +30,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # When he hits enter, the page updates, and now the page lists
         # "1: Buy peacock feathers" as an item in a to-do list
         self.add_todo_element("Buy peacock feathers")
-        self._assertRowInTable("1: Buy peacock feathers", 5)
+        self._assertRowInTable("Buy peacock feathers")
 
         # There is still a text box inviting him to add another item. He
         # enters "Use peacock feathers to make a fly" (Juanito is very methodical)
@@ -38,8 +38,8 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         # The page updates again, and now shows both items on his list
 
-        self._assertRowInTable("1: Buy peacock feathers", 10)
-        self._assertRowInTable('2: Use peacock feathers to make a fly', 10)
+        self._assertRowInTable("Buy peacock feathers")
+        self._assertRowInTable('Use peacock feathers to make a fly')
 
         # Satisfied, he goes back to sleep
 
@@ -47,7 +47,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # Edith start a new to-do list
         self.browser.get(self.live_server_url)
         self.add_todo_element('Buy peacock feathers')
-        self._assertRowInTable('1: Buy peacock feathers')
+        self._assertRowInTable('Buy peacock feathers')
 
         # She notices that her list has a unique URL
         edith_list_url = self.browser.current_url
@@ -66,7 +66,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # Francis starts a new list by entering a new item. He
         # is less interesting than Edith...
         self.add_todo_element('Buy milk')
-        self._assertRowInTable('1: Buy milk')
+        self._assertRowInTable('Buy milk')
 
         # Francis gets his own unique URL
         francis_list_url = self.browser.current_url
@@ -75,7 +75,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         # Again, there is no trace of Edith's list
         self._assertRowNotInTable('1: Buy peacock feathers', 1)
-        self._assertRowInTable('1: Buy milk')
+        self._assertRowInTable('Buy milk')
 
         # Satisfied, they both go back to sleep
 
@@ -92,8 +92,8 @@ class NewVisitorTest(StaticLiveServerTestCase):
             try:
                 table = self.browser.find_element_by_id('id_list_table')
                 rows = table.find_elements_by_tag_name("tr")
-                self.assertIn(row_text, [row.text for row in rows])
-                break
+                self.assertIn(row_text, [row.text.split(maxsplit=1)[1] for row in rows])
+                return None
             except (AssertionError, WebDriverException) as e:
                 if time.time() - start_time > max_wait:
                     raise e
@@ -134,7 +134,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         # She starts a new list and sees the input is nicely centered there too
         self.add_todo_element('testing')
-        self._assertRowInTable('1: testing')
+        self._assertRowInTable('testing')
         inputbox = self.browser.find_element_by_id('id_new_item')
         self.assertAlmostEqual(
             inputbox.location['x'] + inputbox.size['width'] / 2,

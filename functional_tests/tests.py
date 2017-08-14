@@ -61,7 +61,6 @@ class NewVisitorTest(LiveServerTestCase):
 
         # Francis visits the home page.  There is no sign of Edith's list
         self.browser.get(self.live_server_url)
-        self._assertRowNotInTable('1: Buy peacock feathers', 7)
 
         # Francis starts a new list by entering a new item. He
         # is less interesting than Edith...

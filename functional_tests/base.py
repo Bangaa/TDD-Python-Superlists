@@ -48,8 +48,35 @@ class FunctionalTest(StaticLiveServerTestCase):
                 else:
                     time.sleep(0.1)
 
-    def add_todo_element(self, todo_text):
-        inputbox = self.browser.find_element_by_id('id_new_item')
-        inputbox.send_keys(todo_text)
-        inputbox.send_keys(Keys.ENTER)
+    ##
+    # Espera que se ejecute un assert en un tiempo maximo de max_wait segundos
+    # (default: 5).
+    # @param funct Es la funcion assert que se espera (ejm: assertNotIn)
+    # @param max_wait Es la cantidad maxima de tiempo, en segundos, que se
+    # espera antes que se lanze el 'AssertionError'.
+    def wait_for(self, funct, max_wait=5):
+        start_time = time.time()
 
+        while True:
+            try:
+                return funct()
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > max_wait:
+                    raise e
+                else:
+                    time.sleep(0.5)
+
+
+    def add_todo_element(self, todo_text, max_wait=5):
+        start_time = time.time()
+        while True:
+            try:
+                inputbox = self.browser.find_element_by_id('id_new_item')
+                inputbox.send_keys(todo_text)
+                inputbox.send_keys(Keys.ENTER)
+                return None
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > max_wait:
+                    raise e
+                else:
+                    time.sleep(0.5)

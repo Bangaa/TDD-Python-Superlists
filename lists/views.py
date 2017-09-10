@@ -21,7 +21,7 @@ def new_list(request):
         error = "No puedes crear un item sin texto"
         return render(request, 'home.html', {'error': error})
 
-    return redirect(f'/lists/{list_.id}/')
+    return redirect('/lists/%d/' % list_.id)
 
 def add_item(request, list_id):
     list_ = List.objects.get(id=list_id)
@@ -29,4 +29,4 @@ def add_item(request, list_id):
             text=request.POST['item_text'],
             list=list_)
 
-    return redirect(f'/lists/{list_.id}/')
+    return redirect('/lists/%d/' % list_.id)

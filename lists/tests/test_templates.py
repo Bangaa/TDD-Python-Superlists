@@ -90,6 +90,11 @@ class NewListTest(TestCase):
         expected_error = "No puedes crear un item sin texto"
         self.assertContains(response, expected_error)
 
+    def test_invalid_list_items_arent_saved(self):
+        self.client.post('/lists/new', data={'item_text': ''})
+        self.assertEqual(List.objects.count(), 0)
+        self.assertEqual(Item.objects.count(), 0)
+
     def test_empy_todo_elements_arent_saved(self):
         self.client.post('/lists/new', data={'item_text': ''})
         self.assertEqual(List.objects.count(), 0)

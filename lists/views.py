@@ -16,7 +16,7 @@ def view_list(request, list_id):
             item = Item(text=request.POST['item_text'], list=list_)
             item.full_clean()
             item.save()
-            return redirect('/lists/%d/' % list_.id)
+            return redirect(list_)
         except ValidationError:
             error = "No puedes crear un item sin texto"
 
@@ -32,4 +32,4 @@ def new_list(request):
         error = "No puedes crear un item sin texto"
         return render(request, 'home.html', {'error': error})
 
-    return redirect('/lists/%d/' % list_.id)
+    return redirect(list_)

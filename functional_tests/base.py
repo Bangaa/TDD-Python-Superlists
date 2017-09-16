@@ -71,7 +71,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         start_time = time.time()
         while True:
             try:
-                inputbox = self.browser.find_element_by_id('id_new_item')
+                inputbox = self.get_item_input_box()
                 inputbox.send_keys(todo_text)
                 inputbox.send_keys(Keys.ENTER)
                 return None
@@ -80,3 +80,6 @@ class FunctionalTest(StaticLiveServerTestCase):
                     raise e
                 else:
                     time.sleep(0.5)
+
+    def get_item_input_box(self):
+        return self.browser.find_element_by_id('id_text')

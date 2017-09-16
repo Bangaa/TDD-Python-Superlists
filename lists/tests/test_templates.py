@@ -74,16 +74,30 @@ class ViewListTest(TestCase):
 
         self.assertRedirects(response, '/lists/%d/' % correct_list.id)
 
-    def test_validation_errors_end_up_on_lists_page(self):
+    def post_invalid_input(self):
+        """
+        Metodo de ayuda. Se hace un POST invalido: item sin texto, a la url
+        'view_list'
+        """
         list_ = List.objects.create()
-        response = self.client.post(
-            '/lists/%d/' % list_.id,
-            data={'text': ''}
-        )
+        return self.client.post('/lists/%d/' % list_.id, data={'text': ''})
+
+    def test_for_invalid_input_nothing_saved_to_db(self):
+        self.post_invalid_input()
+        self.assertEqual(Item.objects.count(), 0)
+
+    def test_for_invalid_input_renders_list_template(self):
+        response = self.post_invalid_input()
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'list.html')
-        expected_error = ItemForm.Meta.error_messages['text']['required']
-        self.assertContains(response, expected_error)
+
+    def test_for_invalid_input_passes_form_to_template(self):
+        response = self.post_invalid_input()
+        self.assertIsInstance(response.context['form'], ItemForm)
+
+    def test_for_invalid_input_shows_error_on_page(self):
+        response = self.post_invalid_input()
+        self.assertContains(response, ItemForm.Meta.error_messages['text']['required'])
 
     def test_displays_item_form(self):
         list_ = List.objects.create()

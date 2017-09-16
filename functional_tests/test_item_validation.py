@@ -16,7 +16,7 @@ class ItemValidationTest(FunctionalTest):
         # that list items cannot be blank
         self.wait_for(lambda: self.assertEqual(
             self.browser.find_element_by_css_selector('.has-error').text,
-            "No puedes crear un item sin texto"
+            ItemForm.Meta.error_messages['text']['required']
             )
         )
 
@@ -30,7 +30,7 @@ class ItemValidationTest(FunctionalTest):
         # She receives a similar warning on the list page
         self.wait_for(lambda: self.assertEqual(
             self.browser.find_element_by_css_selector('.has-error').text,
-            "No puedes crear un item sin texto"
+            ItemForm.Meta.error_messages['text']['required']
             )
         )
 

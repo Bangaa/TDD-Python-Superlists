@@ -19,7 +19,7 @@ def view_list(request, list_id):
             item.save()
             return redirect(list_)
         except ValidationError:
-            error = "No puedes crear un item sin texto"
+            error = ItemForm.Meta.error_messages['text']['required']
 
     return render(request, 'list.html', {'list': list_, 'error': error})
 
@@ -30,7 +30,7 @@ def new_list(request):
         item.full_clean()
     except ValidationError:
         list_.delete()
-        error = "No puedes crear un item sin texto"
+        error = ItemForm.Meta.error_messages['text']['required']
         return render(request, 'home.html', {'error': error})
 
     return redirect(list_)

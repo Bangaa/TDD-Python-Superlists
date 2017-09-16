@@ -19,5 +19,5 @@ class ItemFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEqual(
                 form.errors['text'],
-                ["No puedes crear un item sin texto"]
+                list(ItemForm.Meta.error_messages['text'].values())
         )

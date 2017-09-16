@@ -82,7 +82,7 @@ class ViewListTest(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'list.html')
-        expected_error = "No puedes crear un item sin texto"
+        expected_error = ItemForm.Meta.error_messages['text']['required']
         self.assertContains(response, expected_error)
 
 class NewListTest(TestCase):
@@ -103,7 +103,7 @@ class NewListTest(TestCase):
         response = self.client.post('/lists/new', data={'text': ''})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'home.html')
-        expected_error = "No puedes crear un item sin texto"
+        expected_error = ItemForm.Meta.error_messages['text']['required']
         self.assertContains(response, expected_error)
 
     def test_invalid_list_items_arent_saved(self):

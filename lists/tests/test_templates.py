@@ -85,6 +85,12 @@ class ViewListTest(TestCase):
         expected_error = ItemForm.Meta.error_messages['text']['required']
         self.assertContains(response, expected_error)
 
+    def test_displays_item_form(self):
+        list_ = List.objects.create()
+        response = self.client.get('/lists/%d/' % list_.id)
+        self.assertIsInstance(response.context['form'], ItemForm)
+        self.assertContains(response, 'name="text"')
+
 class NewListTest(TestCase):
 
     def test_can_save_a_POST_request(self):
@@ -99,12 +105,18 @@ class NewListTest(TestCase):
         new_list = List.objects.first()
         self.assertRedirects(response, '/lists/%d/' % new_list.id)
 
-    def test_validation_errors_are_sent_back_to_home_page_template(self):
+    def test_for_invalid_input_reder_home_template(self):
         response = self.client.post('/lists/new', data={'text': ''})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'home.html')
-        expected_error = ItemForm.Meta.error_messages['text']['required']
-        self.assertContains(response, expected_error)
+
+    def test_validation_errors_are_shown_on_home_page(self):
+        response = self.client.post('/lists/new', data={'text': ''})
+        self.assertContains(response, ItemForm.Meta.error_messages['text']['required'])
+
+    def test_for_invalid_input_passes_form_to_template(self):
+        response = self.client.post('/lists/new', data={'text': ''})
+        self.assertIsInstance(response.context['form'], ItemForm)
 
     def test_invalid_list_items_arent_saved(self):
         self.client.post('/lists/new', data={'text': ''})

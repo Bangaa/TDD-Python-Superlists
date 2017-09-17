@@ -12,13 +12,15 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.browser.refresh()
         self.browser.quit()
 
-    ##
-    # Comprueba que exista una fila determinada en la tabla que contiene la
-    # lista de elementos.
-    # @param row_text Es el texto de la fila que se busca
-    # @param max_wait Es el tiempo maximo que se espera, en segundos, antes que
-    # la busqueda se determine como un fracaso
-    def _assertRowInTable(self, row_text, max_wait=5):
+    def _assertRowInTable(self, row_text, max_wait=10):
+        """Comprueba que exista una fila determinada en la tabla que contiene
+        la lista de elementos.
+
+        Args:
+            row_text: Es el texto de la fila que se busca
+            max_wait: Es el tiempo maximo que se espera, en segundos, antes
+                que la busqueda se determine como un fracaso (Default 10)
+        """
         start_time = time.time()
 
         while True:
@@ -33,7 +35,7 @@ class FunctionalTest(StaticLiveServerTestCase):
                 else:
                     time.sleep(0.1)
 
-    def _assertRowNotInTable(self, row_text, max_wait=5):
+    def _assertRowNotInTable(self, row_text, max_wait=10):
         start_time = time.time()
 
         while time.time() - start_time < max_wait:
@@ -48,13 +50,19 @@ class FunctionalTest(StaticLiveServerTestCase):
                 else:
                     time.sleep(0.1)
 
-    ##
-    # Espera que se ejecute un assert en un tiempo maximo de max_wait segundos
-    # (default: 5).
-    # @param funct Es la funcion assert que se espera (ejm: assertNotIn)
-    # @param max_wait Es la cantidad maxima de tiempo, en segundos, que se
-    # espera antes que se lanze el 'AssertionError'.
     def wait_for(self, funct, max_wait=5):
+        """Espera que se ejecute una funcion exitosamente.
+
+        Las funciones deben pasarse como funciones lambda si es que estas
+        necesitan argumentos, de caso contrario solo se debe pasar el nombre
+        de la funcion.
+
+        Args:
+            funct: Es la funcion que se ejecuta hasta tener exito
+            max_wait: Es la cantidad maxima de tiempo, en segundos, que se
+                espera antes que se lanze la Exception de la funcion (Default
+                10).
+        """
         start_time = time.time()
 
         while True:
@@ -65,7 +73,6 @@ class FunctionalTest(StaticLiveServerTestCase):
                     raise e
                 else:
                     time.sleep(0.5)
-
 
     def add_todo_element(self, todo_text, max_wait=5):
         start_time = time.time()

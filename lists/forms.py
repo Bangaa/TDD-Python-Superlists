@@ -19,3 +19,7 @@ class ItemForm(forms.models.ModelForm):
         error_messages = {
             'text': {'required': "No puedes crear un item sin texto"}
         }
+
+    def save_for_list(self, owner_list):
+        self.instance.list = owner_list
+        return super().save()

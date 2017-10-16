@@ -3,6 +3,7 @@
 
 from django import forms
 from lists.models import Item
+from django.core.exceptions import ValidationError
 
 class ItemForm(forms.models.ModelForm):
 
@@ -17,9 +18,24 @@ class ItemForm(forms.models.ModelForm):
         }
 
         error_messages = {
-            'text': {'required': "No puedes crear un item sin texto"}
+            'text': {'required': "No puedes crear un item sin texto"},
+            'NON_FIELD_ERRORS' : {
+                'unique_together' : "Este item ya existe en tu lista"
+            },
         }
+
+    def __init__(self, *args, **kwargs):
+        lista = kwargs.pop('for_list', None)
+        super().__init__(*args, **kwargs)
+        self.instance.list = lista
 
     def save_for_list(self, owner_list):
         self.instance.list = owner_list
         return super().save()
+
+    def validate_unique(self):
+        try:
+            self.instance.validate_unique()
+        except ValidationError as e:
+            e.error_dict = {'text': self.Meta.error_messages['NON_FIELD_ERRORS'].values()}
+            self._update_errors(e)

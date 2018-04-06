@@ -31,3 +31,7 @@ def new_list(request):
         return redirect(list_)
     else:
         return render(request, 'home.html', {'form': form})
+
+# GET /lists/users/{email}/
+def my_lists(request, email):
+    return render(request, 'my_lists.html')

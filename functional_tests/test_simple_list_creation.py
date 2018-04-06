@@ -67,7 +67,7 @@ class NewVisitorTest(FunctionalTest):
         self.assertNotEqual(francis_list_url, edith_list_url)
 
         # Again, there is no trace of Edith's list
-        self._assertRowNotInTable('1: Buy peacock feathers', 1)
+        self._assertRowNotInTable('1: Buy peacock feathers')
         self._assertRowInTable('Buy milk')
 
         # Satisfied, they both go back to sleep

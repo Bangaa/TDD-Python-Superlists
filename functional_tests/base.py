@@ -4,6 +4,29 @@ from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
 import time
 
+def wait(max_wait):
+    """Decorator. Wait for a helper to be executed succesfully for 'max_wait'
+    seconds top. If the helper keep raissing a exception past the 10 seconds
+    mark, said exception is raissed and the test should be considered failed.
+
+    Args:
+        fn: helper function to be waited for
+        max_wait: wait at most this amount of time
+    """
+    def wait_for_success(fn):
+        def mod_helper(*args, **kwargs):
+            start_time = time.time()
+            while True:
+                try:
+                    return fn(*args, **kwargs)
+                except (AssertionError, WebDriverException) as e:
+                    if time.time() - start_time > max_wait:
+                        raise e
+                    else:
+                        time.sleep(0.2)
+        return mod_helper
+    return wait_for_success
+
 class FunctionalTest(StaticLiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Firefox()
@@ -12,45 +35,26 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.browser.refresh()
         self.browser.quit()
 
-    def _assertRowInTable(self, row_text, max_wait=10):
+    @wait(3)
+    def _assertRowInTable(self, row_text):
         """Comprueba que exista una fila determinada en la tabla que contiene
         la lista de elementos.
 
         Args:
             row_text: Es el texto de la fila que se busca
-            max_wait: Es el tiempo maximo que se espera, en segundos, antes
-                que la busqueda se determine como un fracaso (Default 10)
         """
-        start_time = time.time()
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name("tr")
+        self.assertIn(row_text, [row.text.split(maxsplit=1)[1] for row in rows])
 
-        while True:
-            try:
-                table = self.browser.find_element_by_id('id_list_table')
-                rows = table.find_elements_by_tag_name("tr")
-                self.assertIn(row_text, [row.text.split(maxsplit=1)[1] for row in rows])
-                return None
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > max_wait:
-                    raise e
-                else:
-                    time.sleep(0.1)
+    @wait(3)
+    def _assertRowNotInTable(self, row_text):
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name("tr")
+        self.assertNotIn(row_text, [row.text for row in rows])
 
-    def _assertRowNotInTable(self, row_text, max_wait=10):
-        start_time = time.time()
-
-        while time.time() - start_time < max_wait:
-            try:
-                table = self.browser.find_element_by_id('id_list_table')
-                rows = table.find_elements_by_tag_name("tr")
-                self.assertNotIn(row_text, [row.text for row in rows])
-
-            except  WebDriverException as e:
-                if time.time() - start_time > max_wait:
-                    raise e
-                else:
-                    time.sleep(0.1)
-
-    def wait_for(self, funct, max_wait=5):
+    @wait(10)
+    def wait_for(self, funct):
         """Espera que se ejecute una funcion exitosamente.
 
         Las funciones deben pasarse como funciones lambda si es que estas
@@ -63,17 +67,9 @@ class FunctionalTest(StaticLiveServerTestCase):
                 espera antes que se lanze la Exception de la funcion (Default
                 10).
         """
-        start_time = time.time()
+        return funct()
 
-        while True:
-            try:
-                return funct()
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > max_wait:
-                    raise e
-                else:
-                    time.sleep(0.5)
-
+    @wait(10)
     def wait_to_be_logged_in(self, email):
         self.wait_for(
             lambda: self.browser.find_element_by_link_text('Log out')
@@ -81,6 +77,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         navbar = self.browser.find_element_by_css_selector('.navbar')
         self.assertIn(email, navbar.text)
 
+    @wait(10)
     def wait_to_be_logged_out(self, email):
         self.wait_for(
             lambda: self.browser.find_element_by_name('email')

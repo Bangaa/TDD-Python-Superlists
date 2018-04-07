@@ -86,19 +86,11 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.assertNotIn(email, navbar.text)
 
 
-    def add_todo_element(self, todo_text, max_wait=5):
-        start_time = time.time()
-        while True:
-            try:
-                inputbox = self.get_item_input_box()
-                inputbox.send_keys(todo_text)
-                inputbox.send_keys(Keys.ENTER)
-                return None
-            except (AssertionError, WebDriverException) as e:
-                if time.time() - start_time > max_wait:
-                    raise e
-                else:
-                    time.sleep(0.5)
+    def add_todo_element(self, todo_text):
+        inputbox = self.get_item_input_box()
+        inputbox.send_keys(todo_text)
+        inputbox.send_keys(Keys.ENTER)
 
+    @wait(10)
     def get_item_input_box(self):
         return self.browser.find_element_by_id('id_text')

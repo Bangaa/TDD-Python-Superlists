@@ -15,7 +15,7 @@ class ItemValidationTest(FunctionalTest):
         # Edith goes to the home page and accidentally tries to submit
         # an empty list item. She hits Enter on the empty input box
         self.browser.get(self.live_server_url)
-        self.add_todo_element("", 10)
+        self.add_todo_element("")
 
         # The browser intercepts the request, and does not load the
         # list page
@@ -34,7 +34,7 @@ class ItemValidationTest(FunctionalTest):
         self._assertRowInTable('Buy milk')
 
         # Perversely, she now decides to submit a second blank list item
-        self.add_todo_element("", 10)
+        self.add_todo_element("")
 
         # Again, the browser will not comply
         self._assertRowInTable('Buy milk')

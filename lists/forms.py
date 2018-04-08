@@ -2,7 +2,7 @@
 # vim:fenc=utf-8
 
 from django import forms
-from lists.models import Item
+from lists.models import Item, List
 from django.core.exceptions import ValidationError
 
 class ItemForm(forms.models.ModelForm):
@@ -39,3 +39,15 @@ class ItemForm(forms.models.ModelForm):
         except ValidationError as e:
             e.error_dict = {'text': self.Meta.error_messages['NON_FIELD_ERRORS'].values()}
             self._update_errors(e)
+
+class NewListForm(ItemForm):
+    def save(self, owner):
+        if owner.is_authenticated:
+            return List.create_new(first_item_text=self.cleaned_data['text'], owner=owner)
+        else:
+            return List.create_new(first_item_text=self.cleaned_data['text'])
+
+
+
+class ExistingListItemForm(ItemForm):
+    pass

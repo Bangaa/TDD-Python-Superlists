@@ -29,10 +29,6 @@ class ItemForm(forms.models.ModelForm):
         super().__init__(*args, **kwargs)
         self.instance.list = lista
 
-    def save_for_list(self, owner_list):
-        self.instance.list = owner_list
-        return super().save()
-
     def validate_unique(self):
         try:
             self.instance.validate_unique()

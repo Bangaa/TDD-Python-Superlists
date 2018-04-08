@@ -10,7 +10,7 @@ from lists.forms import ItemForm
 from django.contrib.auth import get_user_model
 
 from django.http import HttpRequest
-from lists.views import new_list2
+from lists.views import new_list
 
 User = get_user_model()
 
@@ -189,13 +189,13 @@ class NewListViewUnitTest(unittest.TestCase):
         self.request.user = unittest.mock.Mock()
 
     def test_passes_POST_data_to_NewListForm(self, NewListForm_m):
-        new_list2(self.request)
+        new_list(self.request)
         NewListForm_m.assert_called_once_with(data=self.request.POST)
 
     def test_saves_form_with_owner_if_form_valid(self, NewListForm_m):
         mock_form = NewListForm_m.return_value
         mock_form.is_valid.return_value = True
-        new_list2(self.request)
+        new_list(self.request)
         mock_form.save.assert_called_once_with(owner=self.request.user)
 
     @unittest.mock.patch('lists.views.redirect')
@@ -205,7 +205,7 @@ class NewListViewUnitTest(unittest.TestCase):
         mock_form = NewListForm_m.return_value
         mock_form.is_valid.return_value = True
 
-        response = new_list2(self.request)
+        response = new_list(self.request)
 
         self.assertEqual(response, redirect_m.return_value)
         redirect_m.assert_called_once_with(mock_form.save.return_value)
@@ -217,7 +217,7 @@ class NewListViewUnitTest(unittest.TestCase):
         mock_form = NewListForm_m.return_value
         mock_form.is_valid.return_value = False
 
-        response = new_list2(self.request)
+        response = new_list(self.request)
 
         self.assertEqual(response, render_m.return_value)
         render_m.assert_called_once_with(
@@ -227,5 +227,5 @@ class NewListViewUnitTest(unittest.TestCase):
     def test_does_not_save_if_form_invalid(self, NewListForm_m):
         mock_form = NewListForm_m.return_value
         mock_form.is_valid.return_value = False
-        new_list2(self.request)
+        new_list(self.request)
         self.assertFalse(mock_form.save.called, "Form saved even if invalid")

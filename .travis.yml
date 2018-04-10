@@ -3,9 +3,14 @@ python:
   - "3.5"
 env:
   - DJANGO=1.11.4
-# command to install dependencies
+  - MOZ_HEADLESS=1
+addons:
+  firefox: latest
 install:
   - pip install -r requirements.txt
 # command to run tests
 script:
   - python manage.py test -v 2 --exclude-tag 'functional-test' # tests unitarios
+  - python manage.py test -v 2 --tag 'functional-test'
+
+# vim:set et sw=2 sts=-1 fdm=indent:

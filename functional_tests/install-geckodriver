@@ -1,4 +1,4 @@
-#! /usr/bin/sh
+#! /usr/bin/env sh
 
 GECKODRIVER_PATH=".geckodriver"
 PLATFORM='linux64'	# or win64

@@ -6,6 +6,7 @@
 #
 # Distributed under terms of the GPL license.
 
+from django.test import tag
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.sessions.backends.db import SessionStore
@@ -13,6 +14,7 @@ from .base import FunctionalTest
 
 User = auth.get_user_model()
 
+@tag('functional-test')
 class MyListsTests(FunctionalTest):
     def create_pre_authenticated_session(self, email):
         user = User.objects.create(email=email)

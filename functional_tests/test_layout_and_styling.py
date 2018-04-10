@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 # vim:fenc=utf-8
 
+from django.test import tag
 from .base import FunctionalTest
 
+@tag('functional-test')
 class LayoutAndStylingTest(FunctionalTest):
 
     def test_layout_and_styling(self): # Edith goes to the home page

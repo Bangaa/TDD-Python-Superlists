@@ -4,8 +4,11 @@ python:
 env:
   - DJANGO=1.11.4
   - MOZ_HEADLESS=1
+  - GECKODRIVER_VERSION=0.20.1
 addons:
   firefox: latest
+before_install:
+  - ./functional_tests/install-geckodriver
 install:
   - pip install -r requirements.txt
 # command to run tests

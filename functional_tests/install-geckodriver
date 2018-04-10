@@ -1,0 +1,15 @@
+#! /usr/bin/sh
+
+GECKODRIVER_PATH=".geckodriver"
+PLATFORM='linux64'	# or win64
+
+if wget -nv https://github.com/mozilla/geckodriver/releases/download/v$GECKODRIVER_VERSION/geckodriver-v$GECKODRIVER_VERSION-$PLATFORM.tar.gz &&\
+	mkdir $GECKODRIVER_PATH &&\
+	tar -xzf "geckodriver-v$GECKODRIVER_VERSION-$PLATFORM.tar.gz" -C $GECKODRIVER_PATH
+then
+	export PATH=$PATH:$(readlink -f $GECKODRIVER_PATH)
+	echo "Done!"
+	exit 0
+else
+	exit 1
+fi

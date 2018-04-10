@@ -4,11 +4,13 @@ python:
 env:
   - DJANGO=1.11.4
   - MOZ_HEADLESS=1
-  - GECKODRIVER_VERSION=0.20.1
 addons:
   firefox: latest
 before_install:
-  - ./functional_tests/install-geckodriver
+  - wget https://github.com/mozilla/geckodriver/releases/download/v0.20.1/geckodriver-v0.20.1-linux64.tar.gz
+  - mkdir geckodriver
+  - tar -xzf geckodriver-v0.20.1-linux64.tar.gz -C geckodriver
+  - export PATH=$PATH:$PWD/geckodriver
 install:
   - pip install -r requirements.txt
 # command to run tests

@@ -1,5 +1,6 @@
 #! /usr/bin/env sh
 
+GECKODRIVER_VERSION=0.20.1
 GECKODRIVER_PATH=".geckodriver"
 PLATFORM='linux64'	# or win64
 

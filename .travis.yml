@@ -6,7 +6,8 @@ env:
 addons:
   firefox: latest
 before_install:
-  - ./functional_tests/install-geckodriver
+  - ./functional_tests/install-geckodriver ".geckodriver"
+  - export PATH=$PATH:$(readlink -f .geckodriver)
 install:
   - pip install -r requirements.txt
 # command to run tests

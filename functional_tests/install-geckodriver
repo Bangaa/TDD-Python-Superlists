@@ -1,16 +1,24 @@
 #! /usr/bin/env sh
+#
+# Script para descargar y descomprimir `geckodriver` en un directorio
+# El directorio se debe pasar por argumento al script
 
 GECKODRIVER_VERSION=0.20.1
-GECKODRIVER_PATH=".geckodriver"
 PLATFORM='linux64'	# or win64
 
+if [ "$1" == "" ]; then
+	echo "Specify a directory"
+	exit 1
+fi
+
 if wget -nv https://github.com/mozilla/geckodriver/releases/download/v$GECKODRIVER_VERSION/geckodriver-v$GECKODRIVER_VERSION-$PLATFORM.tar.gz &&\
-	mkdir $GECKODRIVER_PATH &&\
-	tar -xzf "geckodriver-v$GECKODRIVER_VERSION-$PLATFORM.tar.gz" -C $GECKODRIVER_PATH
+	mkdir $1 &&\
+	tar -xzf "geckodriver-v$GECKODRIVER_VERSION-$PLATFORM.tar.gz" -C $1
 then
-	export PATH=$PATH:$(readlink -f $GECKODRIVER_PATH)
-	echo "Done!"
+	DIR=$(readlink -f $1)
+	echo "Successfully installed in $1.\nPlease append $DIR at the end of your PATH"
 	exit 0
 else
+	echo "Unsuccessful installation"
 	exit 1
 fi

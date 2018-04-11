@@ -3,10 +3,12 @@ python:
   - "3.5"
 env:
   - MOZ_HEADLESS=1
+git:
+  depth: 10
 addons:
   firefox: latest
 before_install:
-  - ./functional_tests/install-geckodriver ".geckodriver"
+  - ./scripts/install-geckodriver ".geckodriver"
   - export PATH=$PATH:$(readlink -f .geckodriver)
 install:
   - pip install -r requirements.txt

@@ -13,7 +13,7 @@ if [ -z "$PLATFORM" ]; then
 fi
 
 # Recibe un comando
-function get_version {
+get_version() {
 	echo $($1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+")
 }
 

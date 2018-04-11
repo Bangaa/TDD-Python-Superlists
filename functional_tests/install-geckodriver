@@ -1,24 +1,51 @@
 #! /usr/bin/env sh
 #
-# Script para descargar y descomprimir `geckodriver` en un directorio
-# El directorio se debe pasar por argumento al script
+# install-geckodriver.sh
+# Copyright (C) 2018 Ian Mejias <idmconejeros@gmail.com>
+#
+# Distributed under terms of the GPL license.
+#
+# Install the latest version of geckodriver in the specified directory.
 
-GECKODRIVER_VERSION=0.20.1
-PLATFORM='linux64'	# or win64
 
-if [ "$1" == "" ]; then
-	echo "Specify a directory"
-	exit 1
+if [ -z "$PLATFORM" ]; then
+	PLATFORM='linux64'	# or linux32
 fi
 
-if wget -nv https://github.com/mozilla/geckodriver/releases/download/v$GECKODRIVER_VERSION/geckodriver-v$GECKODRIVER_VERSION-$PLATFORM.tar.gz &&\
+# Recibe un comando
+function get_version {
+	echo $($1 | grep -Po "[0-9]+\.[0-9]+\.[0-9]+")
+}
+
+if [ "$1" == "" ]; then
+	echo "Specify a directory" >&2
+	exit 1
+elif [ -e "$1/geckodriver" ]; then
+	VERSION=$(get_version "$1/geckodriver --version")
+	echo \
+"""
+There's already a Geckodriver version ($VERSION) installed in that directory;
+and that it will be used. If you want to reinstall Geckodriver in that
+directory you need to remove it beforehand.
+"""
+	exit 0
+fi
+
+echo -n "Obtaining latest version number... "
+LATEST_HREF=$(curl https://github.com/mozilla/geckodriver/releases/latest 2>&1 | grep -Po "(?<=href\=\")http.*?(?=\")")
+LATEST_VERSION=$(get_version "echo $LATEST_HREF")
+echo "version: $LATEST_VERSION"
+
+echo "Installing version $LATEST_VERSION in $1 ..."
+
+if wget -nv https://github.com/mozilla/geckodriver/releases/download/v$LATEST_VERSION/geckodriver-v$LATEST_VERSION-$PLATFORM.tar.gz &&\
 	mkdir $1 &&\
-	tar -xzf "geckodriver-v$GECKODRIVER_VERSION-$PLATFORM.tar.gz" -C $1
+	tar -xzf "geckodriver-v$LATEST_VERSION-$PLATFORM.tar.gz" -C $1
 then
 	DIR=$(readlink -f $1)
 	echo "Successfully installed in $1.\nPlease append $DIR at the end of your PATH"
 	exit 0
 else
-	echo "Unsuccessful installation"
+	echo "Unsuccessful installation" >&2
 	exit 1
 fi

@@ -5,6 +5,10 @@ env:
   - MOZ_HEADLESS=1
 git:
   depth: 10
+branches:
+  only:
+    - master
+    - develop
 addons:
   firefox: latest
 before_install:

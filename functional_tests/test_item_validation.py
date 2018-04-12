@@ -2,9 +2,11 @@
 # vim:fenc=utf-8
 
 from unittest import skip
+from django.test import tag
 from .base import FunctionalTest
 from selenium.webdriver.common.keys import Keys
 
+@tag('functional-test')
 class ItemValidationTest(FunctionalTest):
 
     def get_error_element(self):

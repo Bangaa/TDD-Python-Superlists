@@ -1,0 +1,21 @@
+language: python
+python:
+  - "3.5"
+env:
+  - MOZ_HEADLESS=1
+git:
+  depth: 10
+addons:
+  firefox: latest
+before_install:
+  - ./scripts/install-geckodriver ".geckodriver"
+  - export PATH=$PATH:$(readlink -f .geckodriver)
+install:
+  - pip install -r requirements.txt
+# command to run tests
+script:
+  - python manage.py test -v 2 --exclude-tag 'functional-test' # tests unitarios
+  - python manage.py test -v 2 --tag 'functional-test'
+  - phantomjs lists/static/tests/runner.js  lists/static/tests/tests.html
+
+# vim:set et sw=2 sts=-1 fdm=indent:

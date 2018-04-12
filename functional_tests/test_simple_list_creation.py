@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 # vim:fenc=utf-8
 
+from django.test import tag
 from .base import FunctionalTest
 from selenium import webdriver
 
+@tag('functional-test')
 class NewVisitorTest(FunctionalTest):
 
     def test_can_start_a_list_for_one_user(self):

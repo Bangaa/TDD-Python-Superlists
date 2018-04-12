@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 # vim:fenc=utf-8
 
+from django.test import tag
 from django.core import mail
 from selenium.webdriver.common.keys import Keys
 import re
 
 from .base import FunctionalTest
 
-
-
+@tag('functional-test')
 class LoginTest(FunctionalTest):
 
     def setUp(self):

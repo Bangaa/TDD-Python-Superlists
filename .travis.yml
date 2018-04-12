@@ -16,5 +16,6 @@ install:
 script:
   - python manage.py test -v 2 --exclude-tag 'functional-test' # tests unitarios
   - python manage.py test -v 2 --tag 'functional-test'
+  - phantomjs lists/static/tests/runner.js  lists/static/tests/tests.html
 
 # vim:set et sw=2 sts=-1 fdm=indent:

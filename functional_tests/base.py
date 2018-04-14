@@ -73,7 +73,7 @@ class FunctionalTest(StaticLiveServerTestCase):
             timestamp=timestamp
         )
 
-    @wait(3)
+    @wait(10)
     def _assertRowInTable(self, row_text):
         """Comprueba que exista una fila determinada en la tabla que contiene
         la lista de elementos.
@@ -85,7 +85,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         rows = table.find_elements_by_tag_name("tr")
         self.assertIn(row_text, [row.text.split(maxsplit=1)[1] for row in rows])
 
-    @wait(3)
+    @wait(10)
     def _assertRowNotInTable(self, row_text):
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name("tr")

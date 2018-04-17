@@ -31,55 +31,49 @@
       </div>
     </nav>
 
-    {% if messages %}
+    <div class="container-fluid">
       <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-          {% for message in messages %}
-            {% if message.level_tag == 'success' %}
-              <div class="alert alert-success">{{ message }}</div>
-            {% else %}
-              <div class="alert alert-warning">{{ message }}</div>
-            {% endif %}
-          {% endfor %}
-        </div>
-      </div>
-    {% endif %}
-
-    <div class="container">
-      <div class="row">
-        <!-- Formulario -->
-        <div class="col-md-6 col-md-offset-3 jumbotron form-container">
-          <div class="text-center">
-            <h1>{% block header_text %}{% endblock %}</h1>
-            {% block list_form %}
-              <form method="POST" action="{% block form_action %}{% endblock %}">
-                <div class="form-group">
-                  {{ form.text }}
-                </div>
-                {% csrf_token %}
-                {% if form.errors %}
-                  <div class="form-group has-error">
-                    <span class="help-block">{{ form.text.errors }}</span>
+        <div class="col-md-3"></div>
+        <div class="col-md-9">
+          <div class="row">
+            <div class="col-md-6">
+              {% if messages %}
+                <div class="row">
+                  <div class="col-md-6">
+                    {% for message in messages %}
+                      {% if message.level_tag == 'success' %}
+                        <div class="alert alert-success">{{ message }}</div>
+                      {% else %}
+                        <div class="alert alert-warning">{{ message }}</div>
+                      {% endif %}
+                    {% endfor %}
                   </div>
-                {% endif %}
-              </form>
-            {% endblock %}
+                </div>
+              {% endif %}
+
+              <!-- Formulario -->
+              <div class="jumbotron form-container">
+                <h1>{% block header_text %}{% endblock %}</h1>
+                {% block list_form %}
+                  <form method="POST" action="{% block form_action %}{% endblock %}">
+                    <div class="form-group">
+                      {{ form.text }}
+                    </div>
+                    {% csrf_token %}
+                    {% if form.errors %}
+                      <div class="form-group has-error">
+                        <span class="help-block">{{ form.text.errors }}</span>
+                      </div>
+                    {% endif %}
+                  </form>
+                {% endblock %}
+              </div>
+
+              {% block table %}{% endblock %}
+
+              {% block extra_content %}{% endblock %}
+            </div>
           </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <!-- Tabla -->
-        <div class="col-md-6 col-md-offset-3">
-          {% block table %}
-          {% endblock %}
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-          {% block extra_content %}
-          {% endblock %}
         </div>
       </div>
     </div>

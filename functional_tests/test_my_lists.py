@@ -34,6 +34,12 @@ class MyListsTests(FunctionalTest):
             path='/'
         ))
 
+    def get_sidenav(self):
+        """Helper. Devuelve el sidenav de la página en donde se encuentran las
+        listas del usuario"""
+        return self.browser.find_element_by_css_selector('ul.nav-pills.nav-stacked')
+
+
     def test_logged_in_users_lists_are_saved_as_my_lists(self):
         # Edith is a logged-in user
         self.create_pre_authenticated_session('edith@example.com')
@@ -48,7 +54,7 @@ class MyListsTests(FunctionalTest):
 
         # She notices a new sidenav with the title "My lists", for the first
         # time.
-        sidenav = self.browser.find_element_by_css_selector('ul.nav-pills.nav-stacked')
+        sidenav = self.get_sidenav()
 
         # She sees that her list is in there, named according to its
         # first list item
@@ -68,7 +74,7 @@ class MyListsTests(FunctionalTest):
         second_list_url = self.browser.current_url
 
         # In the sidenav, her new list appears
-        sidenav = self.browser.find_element_by_css_selector('ul.nav-pills.nav-stacked')
+        sidenav = self.get_sidenav()
         self.wait_for(
             lambda: sidenav.find_element_by_link_text('Click cows')
         )
@@ -100,7 +106,7 @@ class MyListsTests(FunctionalTest):
         # se da cuenta que en el sidenav se encuentra su lista 'Sopa'
         # seleccionada
 
-        sidenav = self.browser.find_element_by_css_selector('ul.nav-pills.nav-stacked')
+        sidenav = self.get_sidenav()
         selected = sidenav.find_element_by_css_selector('li.active>a')
 
         self.assertEqual(selected.text, 'Sopa')
@@ -112,7 +118,7 @@ class MyListsTests(FunctionalTest):
         self.add_todo_element('Vino')
         self._assertRowInTable('Vino')
 
-        sidenav = self.browser.find_element_by_css_selector('ul.nav-pills.nav-stacked')
+        sidenav = self.get_sidenav()
         selected = sidenav.find_elements_by_css_selector('li.active>a')
 
         self.assertEqual(len(selected), 1, 'El sidenav tiene más de 1 elemento seleccionado')

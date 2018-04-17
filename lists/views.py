@@ -32,8 +32,3 @@ def new_list(request):
         list_ = form.save(owner=request.user)
         return redirect(list_)
     return render(request, 'home.html', {'form': form})
-
-# GET /lists/users/{email}/
-def my_lists(request, email):
-    owner = User.objects.get(email=email)
-    return render(request, 'my_lists.html', {'owner': owner})

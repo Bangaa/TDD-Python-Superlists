@@ -46,17 +46,19 @@ class MyListsTests(FunctionalTest):
         self._assertRowInTable('Immanentize eschaton')
         first_list_url = self.browser.current_url
 
-        # She notices a "My lists" link, for the first time.
-        self.browser.find_element_by_link_text('My lists').click()
+        # She notices a new sidenav with the title "My lists", for the first
+        # time.
+        sidenav = self.browser.find_element_by_css_selector('ul.nav-pills.nav-stacked')
 
         # She sees that her list is in there, named according to its
         # first list item
         self.wait_for(
-            lambda: self.browser.find_element_by_link_text('Reticulate splines')
+            lambda: sidenav.find_element_by_link_text('Reticulate splines')
         )
-        self.browser.find_element_by_link_text('Reticulate splines').click()
+        sidenav.find_element_by_link_text('Reticulate splines').click()
         self.wait_for(
-            lambda: self.assertEqual(self.browser.current_url, first_list_url)
+            lambda: self.assertEqual(self.browser.current_url, first_list_url,
+                "El link hacia la primera lista no funciona")
         )
 
         # She decides to start another list, just to see
@@ -65,19 +67,53 @@ class MyListsTests(FunctionalTest):
         self._assertRowInTable('Click cows')
         second_list_url = self.browser.current_url
 
-        # Under "my lists", her new list appears
-        self.browser.find_element_by_link_text('My lists').click()
+        # In the sidenav, her new list appears
+        sidenav = self.browser.find_element_by_css_selector('ul.nav-pills.nav-stacked')
         self.wait_for(
-            lambda: self.browser.find_element_by_link_text('Click cows')
-        )
-        self.browser.find_element_by_link_text('Click cows').click()
-        self.wait_for(
-            lambda: self.assertEqual(self.browser.current_url, second_list_url)
+            lambda: sidenav.find_element_by_link_text('Click cows')
         )
 
-        # She logs out.  The "My lists" option disappears
+        # From her second list page she go to her first list page
+        self.assertEqual(self.browser.current_url, second_list_url)
+        self.browser.find_element_by_link_text('Reticulate splines').click()
+        self.wait_for(
+            lambda: self.assertEqual(self.browser.current_url, first_list_url)
+        )
+
+        # She logs out.  The sidenav disappears
         self.browser.find_element_by_link_text('Log out').click()
         self.wait_for(lambda: self.assertEqual(
             self.browser.find_elements_by_link_text('My lists'),
             []
         ))
+
+    def test_correct_list_in_sidenav_is_highlighted(self):
+        # Juanito es un usuario registrado
+        self.create_pre_authenticated_session('juanito@email.com')
+
+        # Juanito se dirige a la pagina principal y empieza una lista
+
+        self.browser.get(self.live_server_url)
+        self.add_todo_element('Sopa')
+        self._assertRowInTable('Sopa')
+
+        # se da cuenta que en el sidenav se encuentra su lista 'Sopa'
+        # seleccionada
+
+        sidenav = self.browser.find_element_by_css_selector('ul.nav-pills.nav-stacked')
+        selected = sidenav.find_element_by_css_selector('li.active>a')
+
+        self.assertEqual(selected.text, 'Sopa')
+
+        # empieza otra lista y ahora su nueva lista se encuentra seleccionada
+        # y la antigua no.
+
+        self.browser.get(self.live_server_url)
+        self.add_todo_element('Vino')
+        self._assertRowInTable('Vino')
+
+        sidenav = self.browser.find_element_by_css_selector('ul.nav-pills.nav-stacked')
+        selected = sidenav.find_elements_by_css_selector('li.active>a')
+
+        self.assertEqual(len(selected), 1, 'El sidenav tiene más de 1 elemento seleccionado')
+        self.assertEqual(selected[0].text, 'Vino')

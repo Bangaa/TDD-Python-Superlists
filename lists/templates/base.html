@@ -33,22 +33,22 @@
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-3"></div>
+        <div class="col-md-3">
+          {% block my_lists_sidenav %}
+          {% endblock %}
+        </div>
+
         <div class="col-md-9">
           <div class="row">
             <div class="col-md-6">
               {% if messages %}
-                <div class="row">
-                  <div class="col-md-6">
-                    {% for message in messages %}
-                      {% if message.level_tag == 'success' %}
-                        <div class="alert alert-success">{{ message }}</div>
-                      {% else %}
-                        <div class="alert alert-warning">{{ message }}</div>
-                      {% endif %}
-                    {% endfor %}
-                  </div>
-                </div>
+                {% for message in messages %}
+                  {% if message.level_tag == 'success' %}
+                    <div class="alert alert-success">{{ message }}</div>
+                  {% else %}
+                    <div class="alert alert-warning">{{ message }}</div>
+                  {% endif %}
+                {% endfor %}
               {% endif %}
 
               <!-- Formulario -->

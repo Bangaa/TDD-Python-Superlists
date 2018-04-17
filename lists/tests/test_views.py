@@ -144,18 +144,6 @@ class NewListViewIntegratedTest(TestCase):
         list_ = List.objects.first()
         self.assertEqual(list_.owner, user)
 
-class MyListsTest(TestCase):
-    def test_my_lists_url_renders_my_lists_template(self):
-        User.objects.create(email='a@b.com')
-        response = self.client.get('/lists/users/a@b.com/')
-        self.assertTemplateUsed(response, 'my_lists.html')
-
-    def test_passes_correct_owner_to_template(self):
-        User.objects.create(email='wrong@owner.com')
-        correct_owner = User.objects.create(email='right@owner.com')
-
-        response = self.client.get('/lists/users/right@owner.com/')
-        self.assertEqual(response.context['owner'], correct_owner)
 
 @unittest.mock.patch('lists.views.NewListForm')
 class NewListViewUnitTest(unittest.TestCase):

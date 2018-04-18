@@ -7,15 +7,17 @@
 {% block form_action %}{% url 'view_list' list.id %}{% endblock %}
 
 {% block my_lists_sidenav %}
-  <ul class="nav nav-pills nav-stacked">
-    {% for l in user.list_set.all %}
-      {% if list.id == l.id %}
-        <li class="active" role="presentation"><a href="{% url 'view_list' l.id %}">{{ l.name }}</a></li>
-      {% else %}
-        <li role="presentation"><a href="{% url 'view_list' l.id %}">{{ l.name }}</a></li>
-      {% endif %}
-    {% endfor %}
-  </ul>
+  <nav>
+    <ul class="nav nav-pills nav-stacked">
+      {% for l in user.list_set.all %}
+        {% if list.id == l.id %}
+          <li class="active" role="presentation"><a href="{% url 'view_list' l.id %}">{{ l.name }}</a></li>
+        {% else %}
+          <li role="presentation"><a href="{% url 'view_list' l.id %}">{{ l.name }}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </nav>
 {% endblock %}
 
 {% block table %}

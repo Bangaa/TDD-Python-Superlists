@@ -39,39 +39,39 @@
         </div>
 
         <div class="col-md-9">
-          <div class="row">
-            <div class="col-md-6">
-              {% if messages %}
-                {% for message in messages %}
-                  {% if message.level_tag == 'success' %}
-                    <div class="alert alert-success">{{ message }}</div>
-                  {% else %}
-                    <div class="alert alert-warning">{{ message }}</div>
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
-
-              <!-- Formulario -->
-              <div class="jumbotron form-container">
-                <h1>{% block header_text %}{% endblock %}</h1>
-                {% block list_form %}
-                  <form method="POST" action="{% block form_action %}{% endblock %}">
-                    <div class="form-group">
-                      {{ form.text }}
-                    </div>
-                    {% csrf_token %}
-                    {% if form.errors %}
-                      <div class="form-group has-error">
-                        <span class="help-block">{{ form.text.errors }}</span>
-                      </div>
+          <div class="container">
+            <div class="row">
+              <div class="col-md-6">
+                {% if messages %}
+                  {% for message in messages %}
+                    {% if message.level_tag == 'success' %}
+                      <div class="alert alert-success">{{ message }}</div>
+                    {% else %}
+                      <div class="alert alert-warning">{{ message }}</div>
                     {% endif %}
-                  </form>
-                {% endblock %}
+                  {% endfor %}
+                {% endif %}
+
+                <!-- Formulario -->
+                <div class="jumbotron form-container">
+                  <h1>{% block header_text %}{% endblock %}</h1>
+                  {% block list_form %}
+                    <form method="POST" action="{% block form_action %}{% endblock %}">
+                      <div class="form-group">
+                        {{ form.text }}
+                      </div>
+                      {% csrf_token %}
+                      {% if form.errors %}
+                        <div class="form-group has-error">
+                          <span class="help-block">{{ form.text.errors }}</span>
+                        </div>
+                      {% endif %}
+                    </form>
+                  {% endblock %}
+                </div>
+                {% block table %}{% endblock %}
+                {% block extra_content %}{% endblock %}
               </div>
-
-              {% block table %}{% endblock %}
-
-              {% block extra_content %}{% endblock %}
             </div>
           </div>
         </div>
